@@ -1,0 +1,7 @@
+/**:
+  ros__parameters:
+    img_size: "640"
+    enable_obstacle_avoidance: "True"
+    weights_filename: "best.pt"
+    confidence: 0.4
+    
