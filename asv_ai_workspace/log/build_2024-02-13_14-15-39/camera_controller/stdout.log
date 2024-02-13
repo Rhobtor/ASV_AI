@@ -1,0 +1,60 @@
+running egg_info
+creating ../../build/camera_controller/camera_controller.egg-info
+writing ../../build/camera_controller/camera_controller.egg-info/PKG-INFO
+writing dependency_links to ../../build/camera_controller/camera_controller.egg-info/dependency_links.txt
+writing entry points to ../../build/camera_controller/camera_controller.egg-info/entry_points.txt
+writing requirements to ../../build/camera_controller/camera_controller.egg-info/requires.txt
+writing top-level names to ../../build/camera_controller/camera_controller.egg-info/top_level.txt
+writing manifest file '../../build/camera_controller/camera_controller.egg-info/SOURCES.txt'
+reading manifest file '../../build/camera_controller/camera_controller.egg-info/SOURCES.txt'
+writing manifest file '../../build/camera_controller/camera_controller.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build
+creating /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build/lib
+creating /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build/lib/camera_controller
+copying camera_controller/test_tf2.py -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build/lib/camera_controller
+copying camera_controller/distance_cells.py -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build/lib/camera_controller
+copying camera_controller/camera_node.py -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build/lib/camera_controller
+copying camera_controller/globalPoint.py -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build/lib/camera_controller
+copying camera_controller/robot_localization.py -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build/lib/camera_controller
+copying camera_controller/__init__.py -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build/lib/camera_controller
+copying camera_controller/model.py -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build/lib/camera_controller
+copying camera_controller/distance_move.py -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build/lib/camera_controller
+copying camera_controller/Zed_node.py -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build/lib/camera_controller
+running install
+running install_lib
+creating /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/python3.10/site-packages/camera_controller
+copying /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build/lib/camera_controller/test_tf2.py -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/python3.10/site-packages/camera_controller
+copying /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build/lib/camera_controller/distance_cells.py -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/python3.10/site-packages/camera_controller
+copying /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build/lib/camera_controller/camera_node.py -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/python3.10/site-packages/camera_controller
+copying /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build/lib/camera_controller/globalPoint.py -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/python3.10/site-packages/camera_controller
+copying /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build/lib/camera_controller/robot_localization.py -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/python3.10/site-packages/camera_controller
+copying /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build/lib/camera_controller/__init__.py -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/python3.10/site-packages/camera_controller
+copying /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build/lib/camera_controller/model.py -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/python3.10/site-packages/camera_controller
+copying /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build/lib/camera_controller/distance_move.py -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/python3.10/site-packages/camera_controller
+copying /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build/lib/camera_controller/Zed_node.py -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/python3.10/site-packages/camera_controller
+byte-compiling /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/python3.10/site-packages/camera_controller/test_tf2.py to test_tf2.cpython-310.pyc
+byte-compiling /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/python3.10/site-packages/camera_controller/distance_cells.py to distance_cells.cpython-310.pyc
+byte-compiling /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/python3.10/site-packages/camera_controller/camera_node.py to camera_node.cpython-310.pyc
+byte-compiling /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/python3.10/site-packages/camera_controller/globalPoint.py to globalPoint.cpython-310.pyc
+byte-compiling /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/python3.10/site-packages/camera_controller/robot_localization.py to robot_localization.cpython-310.pyc
+byte-compiling /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/python3.10/site-packages/camera_controller/__init__.py to __init__.cpython-310.pyc
+byte-compiling /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/python3.10/site-packages/camera_controller/model.py to model.cpython-310.pyc
+byte-compiling /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/python3.10/site-packages/camera_controller/distance_move.py to distance_move.cpython-310.pyc
+byte-compiling /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/python3.10/site-packages/camera_controller/Zed_node.py to Zed_node.cpython-310.pyc
+running install_data
+creating /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/share/ament_index
+creating /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/share/ament_index/resource_index
+creating /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/share/ament_index/resource_index/packages
+copying resource/camera_controller -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/share/ament_index/resource_index/packages
+copying package.xml -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/share/camera_controller
+running install_egg_info
+Copying ../../build/camera_controller/camera_controller.egg-info to /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/python3.10/site-packages/camera_controller-0.0.0-py3.10.egg-info
+running install_scripts
+Installing Zed_node script to /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/camera_controller
+Installing camera_node script to /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/camera_controller
+Installing distance_cells script to /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/camera_controller
+Installing distance_move script to /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/camera_controller
+Installing model script to /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/camera_controller
+writing list of installed files to '/root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/install.log'

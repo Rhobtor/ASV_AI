@@ -1,0 +1,112 @@
+[0.000000] (-) TimerEvent: {}
+[0.000674] (camera_controller) JobQueued: {'identifier': 'camera_controller', 'dependencies': OrderedDict()}
+[0.001631] (camera_controller) JobStarted: {'identifier': 'camera_controller'}
+[0.096205] (-) TimerEvent: {}
+[0.208042] (-) TimerEvent: {}
+[0.311363] (-) TimerEvent: {}
+[0.413241] (-) TimerEvent: {}
+[0.514379] (-) TimerEvent: {}
+[0.617143] (-) TimerEvent: {}
+[0.718958] (-) TimerEvent: {}
+[0.820227] (-) TimerEvent: {}
+[0.921595] (-) TimerEvent: {}
+[1.022855] (-) TimerEvent: {}
+[1.123657] (-) TimerEvent: {}
+[1.225216] (-) TimerEvent: {}
+[1.327240] (-) TimerEvent: {}
+[1.430660] (-) TimerEvent: {}
+[1.535407] (-) TimerEvent: {}
+[1.639854] (-) TimerEvent: {}
+[1.741242] (-) TimerEvent: {}
+[1.842607] (-) TimerEvent: {}
+[1.944158] (-) TimerEvent: {}
+[2.045477] (-) TimerEvent: {}
+[2.158499] (-) TimerEvent: {}
+[2.260853] (-) TimerEvent: {}
+[2.362014] (-) TimerEvent: {}
+[2.463106] (-) TimerEvent: {}
+[2.565158] (-) TimerEvent: {}
+[2.666663] (-) TimerEvent: {}
+[2.768402] (-) TimerEvent: {}
+[2.869932] (-) TimerEvent: {}
+[2.972998] (-) TimerEvent: {}
+[3.074192] (-) TimerEvent: {}
+[3.176420] (-) TimerEvent: {}
+[3.278113] (-) TimerEvent: {}
+[3.379909] (-) TimerEvent: {}
+[3.481419] (-) TimerEvent: {}
+[3.582975] (-) TimerEvent: {}
+[3.600524] (camera_controller) Command: {'cmd': ['/usr/bin/python3', 'setup.py', 'egg_info', '--egg-base', '../../build/camera_controller', 'build', '--build-base', '/root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build', 'install', '--record', '/root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/install.log', '--single-version-externally-managed'], 'cwd': '/root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/src/camera_controller', 'env': {'OPENBLAS_CORETYPE': 'ARMV8', 'HOSTNAME': 'xavier-desktop', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib', 'HOME': '/root', 'OLDPWD': '/root/CameraRecord/ASV_AI/ASV_AI', 'ROS_PYTHON_VERSION': '3', 'COLCON_PREFIX_PATH': '/root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install', 'ROS_DISTRO': 'humble', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'TERM': 'xterm', 'ROS_LOCALHOST_ONLY': '0', 'QT_X11_NO_MITSHM': '1', 'PATH': '/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin', 'XDG_RUNTIME_DIR': '/tmp', 'DISPLAY': ':0', 'LANG': 'C.UTF-8', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:', 'ROS_DOMAIN_ID': '42', 'AMENT_PREFIX_PATH': '/root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller:/opt/ros/humble', 'DEBIAN_FRONTEND': 'noninteractive', 'PWD': '/root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller', 'LC_ALL': 'C.UTF-8', 'PYTHONPATH': '/root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/prefix_override:/root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/python3.10/site-packages:/root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages', 'COLCON': '1', 'EDITOR': 'nano'}, 'shell': False}
+[3.683148] (-) TimerEvent: {}
+[3.785935] (-) TimerEvent: {}
+[3.888661] (-) TimerEvent: {}
+[3.990022] (-) TimerEvent: {}
+[4.091301] (-) TimerEvent: {}
+[4.192979] (-) TimerEvent: {}
+[4.297439] (-) TimerEvent: {}
+[4.399076] (-) TimerEvent: {}
+[4.498585] (camera_controller) StdoutLine: {'line': b'running egg_info\n'}
+[4.501794] (-) TimerEvent: {}
+[4.549678] (camera_controller) StdoutLine: {'line': b'writing ../../build/camera_controller/camera_controller.egg-info/PKG-INFO\n'}
+[4.552390] (camera_controller) StdoutLine: {'line': b'writing dependency_links to ../../build/camera_controller/camera_controller.egg-info/dependency_links.txt\n'}
+[4.553620] (camera_controller) StdoutLine: {'line': b'writing entry points to ../../build/camera_controller/camera_controller.egg-info/entry_points.txt\n'}
+[4.554683] (camera_controller) StdoutLine: {'line': b'writing requirements to ../../build/camera_controller/camera_controller.egg-info/requires.txt\n'}
+[4.555569] (camera_controller) StdoutLine: {'line': b'writing top-level names to ../../build/camera_controller/camera_controller.egg-info/top_level.txt\n'}
+[4.602085] (-) TimerEvent: {}
+[4.654585] (camera_controller) StdoutLine: {'line': b"reading manifest file '../../build/camera_controller/camera_controller.egg-info/SOURCES.txt'\n"}
+[4.660266] (camera_controller) StdoutLine: {'line': b"writing manifest file '../../build/camera_controller/camera_controller.egg-info/SOURCES.txt'\n"}
+[4.662638] (camera_controller) StdoutLine: {'line': b'running build\n'}
+[4.663339] (camera_controller) StdoutLine: {'line': b'running build_py\n'}
+[4.663884] (camera_controller) StdoutLine: {'line': b'copying camera_controller/test_tf2.py -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build/lib/camera_controller\n'}
+[4.664611] (camera_controller) StdoutLine: {'line': b'copying camera_controller/distance_cells.py -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build/lib/camera_controller\n'}
+[4.665154] (camera_controller) StdoutLine: {'line': b'copying camera_controller/camera_node.py -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build/lib/camera_controller\n'}
+[4.665856] (camera_controller) StdoutLine: {'line': b'copying camera_controller/globalPoint.py -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build/lib/camera_controller\n'}
+[4.666522] (camera_controller) StdoutLine: {'line': b'copying camera_controller/robot_localization.py -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build/lib/camera_controller\n'}
+[4.667063] (camera_controller) StdoutLine: {'line': b'copying camera_controller/__init__.py -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build/lib/camera_controller\n'}
+[4.668634] (camera_controller) StdoutLine: {'line': b'copying camera_controller/model.py -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build/lib/camera_controller\n'}
+[4.669518] (camera_controller) StdoutLine: {'line': b'copying camera_controller/distance_move.py -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build/lib/camera_controller\n'}
+[4.669956] (camera_controller) StdoutLine: {'line': b'copying camera_controller/Zed_node.py -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build/lib/camera_controller\n'}
+[4.671694] (camera_controller) StdoutLine: {'line': b'running install\n'}
+[4.672939] (camera_controller) StderrLine: {'line': b'/usr/local/lib/python3.10/dist-packages/setuptools/_distutils/cmd.py:66: SetuptoolsDeprecationWarning: setup.py install is deprecated.\n'}
+[4.673894] (camera_controller) StderrLine: {'line': b'!!\n'}
+[4.674255] (camera_controller) StderrLine: {'line': b'\n'}
+[4.674713] (camera_controller) StderrLine: {'line': b'        ********************************************************************************\n'}
+[4.675034] (camera_controller) StderrLine: {'line': b'        Please avoid running ``setup.py`` directly.\n'}
+[4.675330] (camera_controller) StderrLine: {'line': b'        Instead, use pypa/build, pypa/installer or other\n'}
+[4.676608] (camera_controller) StderrLine: {'line': b'        standards-based tools.\n'}
+[4.677005] (camera_controller) StderrLine: {'line': b'\n'}
+[4.677336] (camera_controller) StderrLine: {'line': b'        See https://blog.ganssle.io/articles/2021/10/setup-py-deprecated.html for details.\n'}
+[4.677632] (camera_controller) StderrLine: {'line': b'        ********************************************************************************\n'}
+[4.677997] (camera_controller) StderrLine: {'line': b'\n'}
+[4.678339] (camera_controller) StderrLine: {'line': b'!!\n'}
+[4.678624] (camera_controller) StderrLine: {'line': b'  self.initialize_options()\n'}
+[4.698284] (camera_controller) StdoutLine: {'line': b'running install_lib\n'}
+[4.702168] (-) TimerEvent: {}
+[4.749349] (camera_controller) StdoutLine: {'line': b'copying /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build/lib/camera_controller/model.py -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/python3.10/site-packages/camera_controller\n'}
+[4.753173] (camera_controller) StdoutLine: {'line': b'byte-compiling /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/python3.10/site-packages/camera_controller/model.py to model.cpython-310.pyc\n'}
+[4.762451] (camera_controller) StdoutLine: {'line': b'running install_data\n'}
+[4.802492] (-) TimerEvent: {}
+[4.808626] (camera_controller) StdoutLine: {'line': b'copying resource/camera_controller -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/share/ament_index/resource_index/packages\n'}
+[4.810039] (camera_controller) StdoutLine: {'line': b'copying package.xml -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/share/camera_controller\n'}
+[4.810657] (camera_controller) StdoutLine: {'line': b'running install_egg_info\n'}
+[4.864273] (camera_controller) StdoutLine: {'line': b"removing '/root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/python3.10/site-packages/camera_controller-0.0.0-py3.10.egg-info' (and everything under it)\n"}
+[4.866872] (camera_controller) StdoutLine: {'line': b'Copying ../../build/camera_controller/camera_controller.egg-info to /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/python3.10/site-packages/camera_controller-0.0.0-py3.10.egg-info\n'}
+[4.871344] (camera_controller) StdoutLine: {'line': b'running install_scripts\n'}
+[4.902697] (-) TimerEvent: {}
+[5.004341] (-) TimerEvent: {}
+[5.106528] (-) TimerEvent: {}
+[5.208463] (-) TimerEvent: {}
+[5.311124] (-) TimerEvent: {}
+[5.359889] (camera_controller) StdoutLine: {'line': b'Installing Zed_node script to /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/camera_controller\n'}
+[5.362573] (camera_controller) StdoutLine: {'line': b'Installing camera_node script to /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/camera_controller\n'}
+[5.365883] (camera_controller) StdoutLine: {'line': b'Installing distance_cells script to /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/camera_controller\n'}
+[5.366436] (camera_controller) StdoutLine: {'line': b'Installing distance_move script to /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/camera_controller\n'}
+[5.366905] (camera_controller) StdoutLine: {'line': b'Installing model script to /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/camera_controller\n'}
+[5.367291] (camera_controller) StdoutLine: {'line': b"writing list of installed files to '/root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/install.log'\n"}
+[5.411438] (-) TimerEvent: {}
+[5.497712] (camera_controller) CommandEnded: {'returncode': 0}
+[5.522700] (-) TimerEvent: {}
+[5.629164] (-) TimerEvent: {}
+[5.732457] (-) TimerEvent: {}
+[5.807008] (camera_controller) JobEnded: {'identifier': 'camera_controller', 'rc': 0}
+[5.814933] (-) EventReactorShutdown: {}

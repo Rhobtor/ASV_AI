@@ -1,0 +1,51 @@
+[3.280s] Invoking command in '/root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/src/camera_controller': PYTHONPATH=/root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/prefix_override:/root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../../build/camera_controller build --build-base /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build install --record /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/install.log --single-version-externally-managed
+[4.167s] running egg_info
+[4.213s] writing ../../build/camera_controller/camera_controller.egg-info/PKG-INFO
+[4.215s] writing dependency_links to ../../build/camera_controller/camera_controller.egg-info/dependency_links.txt
+[4.217s] writing entry points to ../../build/camera_controller/camera_controller.egg-info/entry_points.txt
+[4.217s] writing requirements to ../../build/camera_controller/camera_controller.egg-info/requires.txt
+[4.218s] writing top-level names to ../../build/camera_controller/camera_controller.egg-info/top_level.txt
+[4.318s] reading manifest file '../../build/camera_controller/camera_controller.egg-info/SOURCES.txt'
+[4.323s] writing manifest file '../../build/camera_controller/camera_controller.egg-info/SOURCES.txt'
+[4.324s] running build
+[4.324s] running build_py
+[4.325s] copying camera_controller/test_tf2.py -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build/lib/camera_controller
+[4.326s] copying camera_controller/distance_cells.py -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build/lib/camera_controller
+[4.328s] copying camera_controller/camera_node.py -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build/lib/camera_controller
+[4.330s] copying camera_controller/globalPoint.py -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build/lib/camera_controller
+[4.331s] copying camera_controller/robot_localization.py -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build/lib/camera_controller
+[4.331s] copying camera_controller/__init__.py -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build/lib/camera_controller
+[4.332s] copying camera_controller/model.py -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build/lib/camera_controller
+[4.333s] copying camera_controller/distance_move.py -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build/lib/camera_controller
+[4.333s] copying camera_controller/Zed_node.py -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build/lib/camera_controller
+[4.334s] running install
+[4.336s] /usr/local/lib/python3.10/dist-packages/setuptools/_distutils/cmd.py:66: SetuptoolsDeprecationWarning: setup.py install is deprecated.
+[4.337s] !!
+[4.337s] 
+[4.337s]         ********************************************************************************
+[4.338s]         Please avoid running ``setup.py`` directly.
+[4.338s]         Instead, use pypa/build, pypa/installer or other
+[4.339s]         standards-based tools.
+[4.339s] 
+[4.339s]         See https://blog.ganssle.io/articles/2021/10/setup-py-deprecated.html for details.
+[4.340s]         ********************************************************************************
+[4.340s] 
+[4.340s] !!
+[4.341s]   self.initialize_options()
+[4.360s] running install_lib
+[4.408s] copying /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build/lib/camera_controller/model.py -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/python3.10/site-packages/camera_controller
+[4.411s] byte-compiling /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/python3.10/site-packages/camera_controller/model.py to model.cpython-310.pyc
+[4.423s] running install_data
+[4.469s] copying resource/camera_controller -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/share/ament_index/resource_index/packages
+[4.470s] copying package.xml -> /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/share/camera_controller
+[4.470s] running install_egg_info
+[4.522s] removing '/root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/python3.10/site-packages/camera_controller-0.0.0-py3.10.egg-info' (and everything under it)
+[4.525s] Copying ../../build/camera_controller/camera_controller.egg-info to /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/python3.10/site-packages/camera_controller-0.0.0-py3.10.egg-info
+[4.527s] running install_scripts
+[4.971s] Installing Zed_node script to /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/camera_controller
+[4.978s] Installing camera_node script to /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/camera_controller
+[4.980s] Installing distance_cells script to /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/camera_controller
+[4.982s] Installing distance_move script to /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/camera_controller
+[4.984s] Installing model script to /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/camera_controller
+[4.986s] writing list of installed files to '/root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/install.log'
+[5.092s] Invoked command in '/root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/src/camera_controller' returned '0': PYTHONPATH=/root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/prefix_override:/root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/install/camera_controller/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../../build/camera_controller build --build-base /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/build install --record /root/CameraRecord/ASV_AI/ASV_AI/asv_ai_workspace/build/camera_controller/install.log --single-version-externally-managed

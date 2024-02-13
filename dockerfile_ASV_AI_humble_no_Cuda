@@ -1,0 +1,89 @@
+ARG IMAGE_NAME=arm64v8/ros:humble
+
+FROM ${IMAGE_NAME}
+
+ARG ZED_SDK_MAJOR=4
+ARG ZED_SDK_MINOR=0
+ARG ZED_SDK_PATCH=7
+ARG L4T_MAJOR=32
+ARG L4T_MINOR=7
+
+ARG ROS2_DIST=eloquent
+
+ENV DEBIAN_FRONTEND noninteractive
+
+# # Disable apt-get warnings
+# RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 42D5A192B819C5DA || true && \
+#     apt-get update || true && apt-get install -y --no-install-recommends apt-utils dialog && \
+#     rm -rf /var/lib/apt/lists/*
+
+# ENV TZ=Europe/Paris
+
+# RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && \ 
+#     apt-get update && \
+#     apt-get install --yes lsb-release wget less udev sudo build-essential cmake python3 python3-dev python3-pip python3-wheel git jq libpq-dev zstd usbutils && \    
+#     rm -rf /var/lib/apt/lists/*
+
+# # Add the deadsnakes repository
+# RUN apt-get update && \
+#     apt-get install -y software-properties-common && \
+#     add-apt-repository ppa:deadsnakes/ppa
+
+# # Install Python 3.9 from source
+# RUN apt-get update && \
+#     apt-get install -y --no-install-recommends \
+#         build-essential libssl-dev zlib1g-dev libbz2-dev \
+#         libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev && \
+#     rm -rf /var/lib/apt/lists/*
+
+# # Replace the Python version number with the alternative version (e.g., 3.9.9)
+# RUN wget https://www.python.org/ftp/python/3.9.11/Python-3.9.11.tgz && \
+#     tar xzf Python-3.9.11.tgz && \
+#     cd Python-3.9.11 && \
+#     ./configure --enable-optimizations && \
+#     make -j$(nproc) && \
+#     make install && \
+#     cd .. && \
+#     rm -rf Python-3.9.11*
+
+RUN apt-get update && \
+    apt-get install -y \
+        git \
+        python3-opencv \
+        libglib2.0-0
+
+
+ENV QT_X11_NO_MITSHM=1
+ENV EDITOR=nano
+ENV XDG_RUNTIME_DIR=/tmp
+ENV ROS_DOMAIN_ID=42
+
+RUN apt-get update && apt-get install -y \
+    cmake \
+    curl \
+    nano \
+    python3-pip \
+    python3-pydantic \
+    ruby-dev \
+    wget \
+    xorg-dev \
+    iputils-ping 
+
+RUN pip3 install setuptools==58.2.0
+
+
+# RUN python3 -m pip install torch==1.10.0 torchvision==0.11.1 -f https://download.pytorch.org/whl/cu102.html
+RUN python3 -m pip install torch torchvision
+RUN ln -sf /usr/lib/aarch64-linux-gnu/tegra/libv4l2.so /usr/lib/aarch64-linux-gnu/libv4l2.so
+
+# Needed to work with pyzed on ARM
+ENV OPENBLAS_CORETYPE=ARMV8
+
+WORKDIR /home/asv_ai_workspace
+COPY ./asv_ai_workspace /home/asv_ai_workspace
+
+# Source ROS 2 setup file
+RUN /bin/bash -c "source /opt/ros/humble/setup.bash"
+
+# Setup environment variables
+CMD ["bash"]

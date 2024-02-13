@@ -24,6 +24,7 @@ setup(
             'distance_move=camera_controller.distance_move:main',
             'distance_cells=camera_controller.distnce_move:main',
             'Zed_node=camera_controller.Zed_node:main',
+            'model=camera_controller.model:main',
         ],
     },
 )
