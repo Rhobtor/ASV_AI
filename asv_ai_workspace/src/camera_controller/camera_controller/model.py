@@ -10,6 +10,15 @@ import os
 import utm
 import torch
 import torch.backends.cudnn as cudnn
+import rclpy
+from rclpy.node import Node
+from sensor_msgs.msg import Image
+import cv2
+from cv_bridge import CvBridge
+import torch
+from torch.hub import load
+from geometry_msgs.msg import Point
+from std_msgs.msg import String
 
 class CameraTransformNode(Node):
 
@@ -41,8 +50,15 @@ class CameraTransformNode(Node):
         # Create subscriptions to odometry and depth topics
         self.odometry_sub = self.create_subscription(Odometry, '/zed2i/zed_node/odom', self.odometry_callback, pos_qos)
         self.depth_sub = self.create_subscription(Image, '/zed2i/zed_node/depth/depth_registered', self.depth_callback, depth_qos)
-        self.camera_image_sub = self.create_subscription(Image,'/zed2i/zed_node/left/image',self.camera_image_callback,info_qos)        
+        self.camera_image_sub = self.create_subscription(Image,'/zed2i/zed_node/left/image',self.image_callback,info_qos)        
         self.camera_info_sub = self.create_subscription(CameraInfo,'/zed2i/zed_node/left/camera_info',self.camera_info_callback,info_qos)
+        self.object_distances = self.create_publisher(String, 'object_distances', 10)
+        self.object_coordinates = self.create_publisher(String, 'object_coordinates',self.real_coordinates, 10)
+        timer_period=1.0
+        self.object_coordinates=self.create_timer(timer_period,self.object_coordinates)
+        self.model = load('ultralytics/yolov5', 'yolov5s', pretrained=True)
+    
+    
     def odometry_callback(self, msg):
         # Extract position and orientation from odometry message
         odometry_position = [msg.pose.pose.position.x, msg.pose.pose.position.y, msg.pose.pose.position.z]
@@ -66,24 +82,62 @@ class CameraTransformNode(Node):
         # Almacenar la información de la cámara
         self.camera_info = msg
 
-    def camera_image_callback(self,msg):
-        self.images=memoryview(msg.data).cast('f')
+    # def camera_image_callback(self,msg):
+    #     self.images=memoryview(msg.data).cast('f')
 
+    def image_callback(self, msg):
+        self.cv_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
+    
+    
     def depth_callback(self, msg):
         # Get a pointer to the depth values casting the data pointer to floating point
-        depths = memoryview(msg.data).cast('f')
+        self.depth_image = memoryview(msg.data).cast('f')
 
-        # Image coordinates of the center pixel
-        u = msg.width // 2
-        v = msg.height // 2
+    def object_dect(self):
 
-        # Linear index of the center pixel
-        center_idx = u + msg.width * v
+        results = self.model(self.cv_image)
+        self.draw_boxes(self.cv_image, results.xyxy[0])
+        cv2.imshow("Object Detection", self.cv_image)
+        cv2.waitKey(1)
+
+    def draw_boxes(self, image, detections):
+        for detection in detections:
+            xmin, ymin, xmax, ymax, _, _, name = detection
+            cv2.rectangle(image, (int(xmin), int(ymin)), (int(xmax), int(ymax)), (0, 255, 0), 2)
+            cv2.putText(image, name, (int(xmin), int(ymin) - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+
+            # Calculate distance from camera (example, replace with actual distance calculation)
+            self.distance = self.calculate_distance(xmin, ymin, xmax, ymax)
+            # Publish distance to a topic
+            distance_msg = String()
+            distance_msg.data = f"{name}: {self.distance} meters"
+            self.publisher.publish(distance_msg)
+
+    def calculate_distance(self, xmin, ymin, xmax, ymax):
+        if self.depth_image is None:
+            return 0
+        # Calculate the center of the bounding box
+        center_x = int((xmin + xmax) / 2)
+        center_y = int((ymin + ymax) / 2)
+        
+
+        self.u=center_x
+        self.v=center_y
+        # Extract depth values
+        depth_values = self.depth_image[center_y-10:center_y+10, center_x-10:center_x+10].flatten()
+        depth_values = depth_values[depth_values != 0]  # Remove invalid values
+        
+        if len(depth_values) > 0:
+            return np.mean(depth_values)
+        else:
+            return 0
+        
+    def real_coordinates(self):
 
         # Convert pixel coordinates to 3D point in camera frame
-        Z = depths[center_idx]
-        X = (u - 663.865) * Z / (533.615)
-        Y = (v - 364.0325) * Z / (533.66)
+        Z = self.distance
+        X = (self.u - 663.865) * Z / (533.615)
+        Y = (self.v - 364.0325) * Z / (533.66)
         point_camera_frame = np.array([X, Y, Z])
 
         self.get_logger().info("Point Frame (Base Frame): %s " %  str(point_camera_frame))
@@ -156,26 +210,6 @@ class CameraTransformNode(Node):
 
         self.get_logger().info(f"Image saved at: {image_path}")
 
-
-
-
-    def model (self,msg):
-        
-        # Model
-        model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
-
-        # Images
-        imgs = self.images  # batch of images
-
-        # Inference
-        results = model(imgs)
-
-        # Results
-        results.print()
-        results.save()  # or .show()
-
-        results.xyxy[0]  # img1 predictions (tensor)
-        results.pandas().xyxy[0]  # img1 predictions (pandas)
 
 
 def main(args=None):
