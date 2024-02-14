@@ -19,6 +19,10 @@ import torch
 from torch.hub import load
 from geometry_msgs.msg import Point
 from std_msgs.msg import String
+# import tf2_ros
+# from tf2_ros import TransformListener
+# from tf2_geometry_msgs import do_transform_pose
+# from tf2_py import Quaternion
 
 class CameraTransformNode(Node):
 
@@ -48,15 +52,15 @@ class CameraTransformNode(Node):
             history=rclpy.qos.QoSHistoryPolicy.KEEP_LAST
             )
         # Create subscriptions to odometry and depth topics
-        self.odometry_sub = self.create_subscription(Odometry, '/zed2i/zed_node/odom', self.odometry_callback, pos_qos)
+        self.odometry_sub = self.create_subscription(PoseStamped, '/zed2i/zed_node/pose', self.pose_callback, pos_qos)
         self.depth_sub = self.create_subscription(Image, '/zed2i/zed_node/depth/depth_registered', self.depth_callback, depth_qos)
         self.camera_image_sub = self.create_subscription(Image,'/zed2i/zed_node/left/image_rect_color',self.image_callback,info_qos)        
         self.camera_info_sub = self.create_subscription(CameraInfo,'/zed2i/zed_node/left/camera_info',self.camera_info_callback,info_qos)
         self.object_distances = self.create_publisher(String, 'object_distances', 10)
         self.object_coordinates = self.create_publisher(String, 'object_coordinates', 10)
         timer_period=1.0
-        #self.object_coordinates_timer=self.create_timer(timer_period,self.real_coordinates)
-        #self.object_distances_timer=self.create_timer(timer_period,self.object_dect)
+        self.object_coordinates_timer=self.create_timer(timer_period,self.real_coordinates)
+        self.object_distances_timer=self.create_timer(timer_period,self.object_dect)
         self.model = load('ultralytics/yolov5', 'yolov5s', pretrained=True)
         self.bridge = CvBridge()
         self.distance=0
@@ -64,25 +68,28 @@ class CameraTransformNode(Node):
         self.v=0
         self.cv_image=None
         self.depth_image=None
-    def odometry_callback(self, msg):
-        # Extract position and orientation from odometry message
-        odometry_position = [msg.pose.pose.position.x, msg.pose.pose.position.y, msg.pose.pose.position.z]
-        odometry_orientation = [msg.pose.pose.orientation.x, msg.pose.pose.orientation.y, msg.pose.pose.orientation.z, msg.pose.pose.orientation.w]
-        # self.get_logger().info("Test translation point: %s " %  str(odometry_orientation))
-       
-        # Update extrinsic parameters based on odometry
-        self.rotation_matrix, self.translation_vector = self.update_extrinsic_parameters(odometry_position, odometry_orientation)
-        # rotation_matrix_str = "\n".join(" ".join(map(str, row)) for row in self.rotation_matrix)
-        # self.get_logger().info("Rotation Matrix:\n%s" % rotation_matrix_str)
-    def update_extrinsic_parameters(self, odometry_position, odometry_orientation):
-        # Assuming odometry_position is a 3-element array [x, y, z]
-        translation_vector = np.array(odometry_position)
+        self.roll=None
+        self.pitch=None
+        self.yaw=None
+        self.RAD2DEG = 57.295779513
 
-        # Assuming odometry_orientation is a 4-element array [x, y, z, w]
-        rotation_quaternion = quaternion.as_quat_array(odometry_orientation)
-        rotation_matrix = quaternion.as_rotation_matrix(rotation_quaternion)
+    def pose_callback(self, msg):
+        # Camera position in map frame
+        tx = msg.pose.position.x
+        ty = msg.pose.position.y
+        tz = msg.pose.position.z
 
-        return rotation_matrix, translation_vector
+        # Orientation quaternion
+        q = quaternion.quaternion(
+            msg.pose.orientation.w,
+            msg.pose.orientation.x,
+            msg.pose.orientation.y,
+            msg.pose.orientation.z
+        )
+
+        # Convert quaternion to roll, pitch, and yaw
+        self.roll, self.pitch, self.yaw = quaternion.as_euler_angles(q)
+
     def camera_info_callback(self, msg):
         # Almacenar la información de la cámara
         self.camera_info = msg
@@ -92,14 +99,14 @@ class CameraTransformNode(Node):
 
     def image_callback(self, msg):
         self.cv_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
-        if self.cv_image is None:
-            self.get_logger().info("No image available yet")
+        # if self.cv_image is None:
+        #     self.get_logger().info("No image available yet")
             
     
-        results = self.model(self.cv_image)
-        self.draw_boxes(self.cv_image, results.xyxy[0])
-        cv2.imshow("Object Detection", self.cv_image)
-        cv2.waitKey(1)
+        # results = self.model(self.cv_image)
+        # self.draw_boxes(self.cv_image, results.xyxy[0])
+        # cv2.imshow("Object Detection", self.cv_image)
+        # cv2.waitKey(1)
     
     def depth_callback(self, msg):
         # Get a pointer to the depth values casting the data pointer to floating point
@@ -202,24 +209,34 @@ class CameraTransformNode(Node):
         self.get_logger().info("Point Center Camera: %s " %  str(point_camera_shifted))
 
         
+###### por ahora no############################
+        # # Convertir de latitud y longitud a coordenadas UTM, (sub a gps node ASV)
+        # latitude = 37.4191666
+        # longitude = -6.0005347
+        # utm_coords = utm.from_latlon(latitude, longitude)
+        # utm_x, utm_y, zone_number, zone_letter = utm_coords
 
-        # Convertir de latitud y longitud a coordenadas UTM, (sub a gps node ASV)
-        latitude = 37.4191666
-        longitude = -6.0005347
-        utm_coords = utm.from_latlon(latitude, longitude)
-        utm_x, utm_y, zone_number, zone_letter = utm_coords
+        # #print(f'UTM Coordinates: ({utm_x}, {utm_y}) in zone {zone_number}{zone_letter}')
 
-        #print(f'UTM Coordinates: ({utm_x}, {utm_y}) in zone {zone_number}{zone_letter}')
+        # # Convertir de coordenadas UTM a latitud y longitud
+        # back_to_latlon = utm.to_latlon(point_camera_shifted[0]+utm_x, point_camera_shifted[1]+utm_y, zone_number, zone_letter)
+        # back_latitude, back_longitude = back_to_latlon
 
-        # Convertir de coordenadas UTM a latitud y longitud
-        back_to_latlon = utm.to_latlon(point_camera_shifted[0]+utm_x, point_camera_shifted[1]+utm_y, zone_number, zone_letter)
-        back_latitude, back_longitude = back_to_latlon
+        # #print(f'Back to Latitud, Longitude: ({back_latitude}, {back_longitude})')
 
-        #print(f'Back to Latitud, Longitude: ({back_latitude}, {back_longitude})')
-
-        ##
+        # ##
+########################################################        
         
-        
+        rotation_matrix = np.array([
+            [np.cos(self.yaw), -np.sin(self.yaw), 0],
+            [np.sin(self.yaw), np.cos(self.yaw), 0],
+            [0, 0, 1]
+                ])
+
+        # Aplicar la rotación a la posición del objeto
+        rotated_obj_position = np.dot(rotation_matrix,point_camera_shifted )
+        self.get_logger().info("ASV poitn: %s " %  str(rotated_obj_position))
+
        # Capture the image with the point marked
         # self.visualize_point(msg, u, v)
 

@@ -1,6 +1,0 @@
-[console_scripts]
-Zed_node = camera_controller.Zed_node:main
-camera_node = camera_controller.camera_node:main
-distance_cells = camera_controller.distnce_move:main
-distance_move = camera_controller.distance_move:main
-model = camera_controller.model:main
