@@ -61,7 +61,10 @@ class CameraTransformNode(Node):
         timer_period=1.0
         self.object_coordinates_timer=self.create_timer(timer_period,self.real_coordinates)
         self.object_distances_timer=self.create_timer(timer_period,self.object_dect)
-        self.model = load('ultralytics/yolov5', 'yolov5s', pretrained=True)
+        # device = torch.device('cuda:0')
+        # self.model = load('ultralytics/yolov5', 'yolov5s', pretrained=True).to(device)
+        self.model = load('ultralytics/yolov5', 'yolov5s', pretrained=True).to(torch.device("cuda" if torch.cuda.is_available() else "cpu"))
+        # self.model = load('ultralytics/yolov5', 'yolov5s', pretrained=True)
         self.bridge = CvBridge()
         self.distance=0
         self.u=0
