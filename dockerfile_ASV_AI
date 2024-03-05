@@ -28,7 +28,7 @@ RUN pip3 install setuptools==58.2.0
 
 RUN pip3 install utm
 RUN pip3 install numpy-quaternion
-RUN pip3 install -U ultralytics
+# RUN pip3 install -U ultralytics
 
 # Install additional dependencies
 RUN apt-get update && \
@@ -39,9 +39,37 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Install PyTorch
-RUN python3 -m pip install torch==1.10.0 torchvision==0.11.1 -f https://download.pytorch.org/whl/cu114.html
+# # Install PyTorch
+# RUN python3 -m pip install torch==1.10.0 torchvision==0.11.1 -f https://download.pytorch.org/whl/cu114.html
 
+# RUN pip3 install curl && \
+#     curl -O https://nvidia.box.com/shared/static/ssf2v7pf5i245fk4i0q926hy4imzs2ph.whl && \
+#     pip3 install torch-1.11.0-cp38-cp38-linux_aarch64.whl
+# Copy the PyTorch wheel file into the image
+RUN apt-get -y update
+RUN apt-get -y install libopenblas-dev
+RUN pip install "opencv-python-headless<4.3"
+RUN wget https://nvidia.box.com/shared/static/ssf2v7pf5i245fk4i0q926hy4imzs2ph.whl -O torch-1.11.0-cp38-cp38-linux_aarch64.whl
+RUN apt-get -y install python3-pip libopenblas-base libopenmpi-dev
+RUN pip3 install Cython
+RUN pip3 install numpy torch-1.11.0-cp38-cp38-linux_aarch64.whl
+
+# RUN apt-get install libjpeg-dev zlib1g-dev libpython3-dev libopenblas-dev libavcodec-dev libavformat-dev libswscale-dev
+# RUN git clone --branch v0.12.0 https://github.com/pytorch/vision torchvision   # see below for version of torchvision to download
+# RUN cd torchvision
+# RUN export BUILD_VERSION=0.12.0  # where 0.x.0 is the torchvision version  
+# RUN python3 setup.py install --user
+# RUN cd ../  # attempting to load torchvision from build dir will result in import error
+RUN git clone --branch v0.12.0 https://github.com/pytorch/vision torchvision \
+    && cd torchvision \
+    && export BUILD_VERSION=0.12.0 \
+    && python3 setup.py install --user \
+    && cd ../  # attempting to load torchvision from build dir will result in import error
+
+
+# COPY torch-1.11.0-cp38-cp38-linux_aarch64.whl /tmp/
+# # Install PyTorch from the copied wheel file
+# RUN python3 -m pip install /tmp/torch-1.11.0-cp38-cp38-linux_aarch64.whl
 # Create a symbolic link for libv4l2.so
 RUN ln -sf /usr/lib/aarch64-linux-gnu/tegra/libv4l2.so /usr/lib/aarch64-linux-gnu/libv4l2.so
 
