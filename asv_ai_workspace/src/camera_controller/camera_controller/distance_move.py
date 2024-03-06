@@ -37,9 +37,9 @@ class CameraTransformNode(Node):
             history=rclpy.qos.QoSHistoryPolicy.KEEP_LAST
             )
         # Create subscriptions to odometry and depth topics
-        self.odometry_sub = self.create_subscription(Odometry, '/zed2i/zed_node/odom', self.odometry_callback, pos_qos)
-        self.depth_sub = self.create_subscription(Image, '/zed2i/zed_node/depth/depth_registered', self.depth_callback, depth_qos)
-        self.camera_info_sub = self.create_subscription(CameraInfo,'/zed2i/zed_node/left/camera_info',self.camera_info_callback,info_qos)
+        self.odometry_sub = self.create_subscription(Odometry, '/zed/zed_node/odom', self.odometry_callback, pos_qos)
+        self.depth_sub = self.create_subscription(Image, '/zed/zed_node/depth/depth_registered', self.depth_callback, depth_qos)
+        self.camera_info_sub = self.create_subscription(CameraInfo,'/zed/zed_node/left/camera_info',self.camera_info_callback,info_qos)
     def odometry_callback(self, msg):
         # Extract position and orientation from odometry message
         odometry_position = [msg.pose.pose.position.x, msg.pose.pose.position.y, msg.pose.pose.position.z]

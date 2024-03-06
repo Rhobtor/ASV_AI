@@ -1,0 +1,180 @@
+ARG IMAGE_NAME=dustynv/ros:humble-ros-base-l4t-r35.1.0
+FROM ${IMAGE_NAME}
+
+
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV QT_X11_NO_MITSHM=1
+ENV EDITOR=nano
+ENV XDG_RUNTIME_DIR=/tmp
+ENV ROS_DOMAIN_ID=42
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+            python3-pip \
+		  python3-dev \
+		  libopenblas-dev \
+		  libopenmpi-dev \
+            openmpi-bin \
+            openmpi-common \
+		  gfortran \
+		  libomp-dev \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+RUN pip3 install --no-cache-dir setuptools Cython wheel
+RUN pip3 install --no-cache-dir --verbose numpy
+
+RUN apt-get update && apt-get install -y \
+    cmake \
+    curl \
+    nano \
+    python3-pip \
+    python3-pydantic \
+    ruby-dev \
+    wget \
+    xorg-dev \
+    iputils-ping 
+RUN python3 -m pip install --upgrade pip
+
+RUN pip3 install setuptools>=65.5.1
+#RUN pip3 install pandas>=1.1.4
+RUN pip3 install utm
+#RUN pip3 install numpy>=1.23.5
+#RUN pip3 install Pillow>=9.4.0
+#RUN pip3 install PyYAML>=5.3.1
+#RUN pip3 install requests>=2.23.0
+#RUN pip3 install scipy>=1.4.1
+#RUN pip3 install numpy>=1.23.5
+RUN pip3 install numpy-quaternion
+RUN pip3 install gitpython>=3.1.30
+RUN pip3 install -U ultralytics
+
+
+
+RUN pip3 uninstall -y torch torchvision
+
+# Install additional dependencies
+RUN apt-get update && \
+    apt-get install -y \
+        git \
+        python3-opencv \
+        libglib2.0-0 && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# # Install PyTorch
+# RUN python3 -m pip install torch==1.10.0 torchvision==0.11.1 -f https://download.pytorch.org/whl/cu114.html
+
+# RUN pip3 install curl && \
+#     curl -O https://nvidia.box.com/shared/static/ssf2v7pf5i245fk4i0q926hy4imzs2ph.whl && \
+#     pip3 install torch-1.11.0-cp38-cp38-linux_aarch64.whl
+# Copy the PyTorch wheel file into the image
+RUN apt-get -y update
+RUN apt-get -y install libopenblas-dev
+RUN pip install "opencv-python-headless<4.3"
+
+### torch version install############################################
+ARG PYTORCH_URL=https://nvidia.box.com/shared/static/ssf2v7pf5i245fk4i0q926hy4imzs2ph.whl
+ARG PYTORCH_WHL=torch-1.11.0-cp38-cp38-linux_aarch64.whl
+
+RUN wget --quiet --show-progress --progress=bar:force:noscroll --no-check-certificate ${PYTORCH_URL} -O ${PYTORCH_WHL} && \
+    pip3 install --no-cache-dir --verbose ${PYTORCH_WHL} && \
+    rm ${PYTORCH_WHL}
+
+### OLD
+# RUN wget https://nvidia.box.com/shared/static/ssf2v7pf5i245fk4i0q926hy4imzs2ph.whl -O torch-1.11.0-cp38-cp38-linux_aarch64.whl
+# RUN apt-get -y install python3-pip libopenblas-base libopenmpi-dev
+# # RUN pip3 install Cython
+# RUN pip3 install numpy torch-1.11.0-cp38-cp38-linux_aarch64.whl
+
+###########################################################
+
+# RUN apt-get install libjpeg-dev zlib1g-dev libpython3-dev libopenblas-dev libavcodec-dev libavformat-dev libswscale-dev
+# RUN git clone --branch v0.12.0 https://github.com/pytorch/vision torchvision   # see below for version of torchvision to download
+# RUN cd torchvision
+# RUN export BUILD_VERSION=0.12.0  # where 0.x.0 is the torchvision version  
+# RUN python3 setup.py install --user
+# RUN cd ../  # attempting to load torchvision from build dir will result in import error
+
+RUN git clone --branch v0.12.0 https://github.com/pytorch/vision torchvision \
+    && cd torchvision \
+    && export BUILD_VERSION=0.12.0 \
+    && python3 setup.py install --user \
+    && cd ../  # attempting to load torchvision from build dir will result in import error
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+		  software-properties-common \
+		  apt-transport-https \
+		  ca-certificates \
+		  gnupg \
+		  lsb-release \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+# note:  cmake is currently pinned to 3.22.3 because of https://github.com/pytorch/pytorch/issues/74955	 
+RUN pip3 install --upgrade --no-cache-dir --verbose cmake==3.22.3
+RUN cmake --version
+
+
+# patch for https://github.com/pytorch/pytorch/issues/45323
+RUN PYTHON_ROOT=`pip3 show torch | grep Location: | cut -d' ' -f2` && \
+    TORCH_CMAKE_CONFIG=$PYTHON_ROOT/torch/share/cmake/Torch/TorchConfig.cmake && \
+    echo "patching _GLIBCXX_USE_CXX11_ABI in ${TORCH_CMAKE_CONFIG}" && \
+    sed -i 's/  set(TORCH_CXX_FLAGS "-D_GLIBCXX_USE_CXX11_ABI=")/  set(TORCH_CXX_FLAGS "-D_GLIBCXX_USE_CXX11_ABI=0")/g' ${TORCH_CMAKE_CONFIG}
+
+
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+		  pkg-config \
+		  libffi-dev \
+		  libsndfile1 \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+RUN pip3 install --no-cache-dir scikit-build && \
+    pip3 install --no-cache-dir ninja && \
+    pip3 install --no-cache-dir --verbose pysoundfile
+
+# # 
+# # install OpenCV (with CUDA)
+# #
+# ARG OPENCV_URL=https://nvidia.box.com/shared/static/5v89u6g5rb62fpz4lh0rz531ajo2t5ef.gz
+# ARG OPENCV_DEB=OpenCV-4.5.0-aarch64.tar.gz
+
+# COPY scripts/opencv_install.sh /tmp/opencv_install.sh
+# RUN cd /tmp && ./opencv_install.sh ${OPENCV_URL} ${OPENCV_DEB}
+
+
+# #
+# # PyCUDA
+# #
+# ENV PATH="/usr/local/cuda/bin:${PATH}"
+# ENV LD_LIBRARY_PATH="/usr/local/cuda/lib64:${LD_LIBRARY_PATH}"
+# RUN echo "$PATH" && echo "$LD_LIBRARY_PATH"
+
+# RUN pip3 install --no-cache-dir --verbose pycuda six
+
+
+
+# COPY torch-1.11.0-cp38-cp38-linux_aarch64.whl /tmp/
+# # Install PyTorch from the copied wheel file
+# RUN python3 -m pip install /tmp/torch-1.11.0-cp38-cp38-linux_aarch64.whl
+# Create a symbolic link for libv4l2.so
+RUN ln -sf /usr/lib/aarch64-linux-gnu/tegra/libv4l2.so /usr/lib/aarch64-linux-gnu/libv4l2.so
+
+# Set environment variable for OpenBLAS_CORETYPE
+ENV OPENBLAS_CORETYPE=ARMV8
+
+# Set working directory and copy workspace
+WORKDIR /home/asv_ai_workspace
+COPY ./asv_ai_workspace /home/asv_ai_workspace
+
+
+# # Source ROS 2 setup file
+# RUN /bin/bash -c "source /opt/ros/humble/install/setup.bash"
+
+# Setup environment variables
+CMD ["bash"]

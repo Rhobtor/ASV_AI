@@ -52,10 +52,10 @@ class CameraTransformNode(Node):
             history=rclpy.qos.QoSHistoryPolicy.KEEP_LAST
             )
         # Create subscriptions to odometry and depth topics
-        self.odometry_sub = self.create_subscription(PoseStamped, '/zed2i/zed_node/pose', self.pose_callback, pos_qos)
-        self.depth_sub = self.create_subscription(Image, '/zed2i/zed_node/depth/depth_registered', self.depth_callback, depth_qos)
-        self.camera_image_sub = self.create_subscription(Image,'/zed2i/zed_node/left/image_rect_color',self.image_callback,info_qos)        
-        self.camera_info_sub = self.create_subscription(CameraInfo,'/zed2i/zed_node/left/camera_info',self.camera_info_callback,info_qos)
+        self.odometry_sub = self.create_subscription(PoseStamped, '/zed/zed_node/pose', self.pose_callback, pos_qos)
+        self.depth_sub = self.create_subscription(Image, '/zed/zed_node/depth/depth_registered', self.depth_callback, depth_qos)
+        self.camera_image_sub = self.create_subscription(Image,'/zed/zed_node/left/image_rect_color',self.image_callback,info_qos)        
+        self.camera_info_sub = self.create_subscription(CameraInfo,'/zed/zed_node/left/camera_info',self.camera_info_callback,info_qos)
         self.object_distances = self.create_publisher(String, 'object_distances', 10)
         self.object_coordinates = self.create_publisher(String, 'object_coordinates', 10)
         timer_period=1.0
@@ -102,14 +102,14 @@ class CameraTransformNode(Node):
 
     def image_callback(self, msg):
         self.cv_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
-        # if self.cv_image is None:
-        #     self.get_logger().info("No image available yet")
+        if self.cv_image is None:
+            self.get_logger().info("No image available yet")
             
     
-        # results = self.model(self.cv_image)
-        # self.draw_boxes(self.cv_image, results.xyxy[0])
-        # cv2.imshow("Object Detection", self.cv_image)
-        # cv2.waitKey(1)
+        results = self.model(self.cv_image)
+        self.draw_boxes(self.cv_image, results.xyxy[0])
+        cv2.imshow("Object Detection", self.cv_image)
+        cv2.waitKey(1)
     
     def depth_callback(self, msg):
         # Get a pointer to the depth values casting the data pointer to floating point
