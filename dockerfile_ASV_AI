@@ -34,7 +34,7 @@ RUN pip3 install numpy-quaternion
 RUN pip3 install gitpython>=3.1.30
 RUN pip3 install -U ultralytics
 ####
-RUN pip3 install ninja
+# RUN pip3 install ninja
 #ENV CUDA_HOME = "/usr/local/cuda/"
 
 # ENV FORCE_CUDA="1"
