@@ -1,11 +1,7 @@
 ARG IMAGE_NAME=dustynv/ros:humble-ros-base-l4t-r35.1.0
 FROM ${IMAGE_NAME}
 
-RUN apt-get update && \
-    apt-get install -y \
-        git \
-        python3-opencv \
-        libglib2.0-0
+
 
 
 ENV QT_X11_NO_MITSHM=1
@@ -23,12 +19,24 @@ RUN apt-get update && apt-get install -y \
     wget \
     xorg-dev \
     iputils-ping 
+RUN python3 -m pip install --upgrade pip
 
-RUN pip3 install setuptools==58.2.0
-
+RUN pip3 install setuptools>=65.5.1
+#RUN pip3 install pandas>=1.1.4
 RUN pip3 install utm
+#RUN pip3 install numpy>=1.23.5
+#RUN pip3 install Pillow>=9.4.0
+#RUN pip3 install PyYAML>=5.3.1
+#RUN pip3 install requests>=2.23.0
+#RUN pip3 install scipy>=1.4.1
+#RUN pip3 install numpy>=1.23.5
 RUN pip3 install numpy-quaternion
-# RUN pip3 install -U ultralytics
+RUN pip3 install gitpython>=3.1.30
+RUN pip3 install -U ultralytics
+
+
+
+RUN pip3 uninstall -y torch torchvision
 
 # Install additional dependencies
 RUN apt-get update && \
@@ -79,6 +87,7 @@ ENV OPENBLAS_CORETYPE=ARMV8
 # Set working directory and copy workspace
 WORKDIR /home/asv_ai_workspace
 COPY ./asv_ai_workspace /home/asv_ai_workspace
+
 
 # # Source ROS 2 setup file
 # RUN /bin/bash -c "source /opt/ros/humble/install/setup.bash"

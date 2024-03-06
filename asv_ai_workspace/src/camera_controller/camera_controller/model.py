@@ -230,15 +230,15 @@ class CameraTransformNode(Node):
         # ##
 ########################################################        
         
-        rotation_matrix = np.array([
-            [np.cos(self.yaw), -np.sin(self.yaw), 0],
-            [np.sin(self.yaw), np.cos(self.yaw), 0],
-            [0, 0, 1]
-                ])
+        # rotation_matrix = np.array([
+        #     [np.cos(self.yaw), -np.sin(self.yaw), 0],
+        #     [np.sin(self.yaw), np.cos(self.yaw), 0],
+        #     [0, 0, 1]
+        #         ])
 
-        # Aplicar la rotación a la posición del objeto
-        rotated_obj_position = np.dot(rotation_matrix,point_camera_shifted )
-        self.get_logger().info("ASV poitn: %s " %  str(rotated_obj_position))
+        # # Aplicar la rotación a la posición del objeto
+        # rotated_obj_position = np.dot(rotation_matrix,point_camera_shifted )
+        # self.get_logger().info("ASV poitn: %s " %  str(rotated_obj_position))
 
        # Capture the image with the point marked
         # self.visualize_point(msg, u, v)
