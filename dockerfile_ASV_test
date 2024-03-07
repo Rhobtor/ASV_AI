@@ -37,7 +37,7 @@ RUN apt-get update && apt-get install -y \
     iputils-ping 
 RUN python3 -m pip install --upgrade pip
 
-RUN pip3 install setuptools>=65.5.1
+RUN pip3 install setuptools>='65.5.1'
 #RUN pip3 install pandas>=1.1.4
 RUN pip3 install utm
 #RUN pip3 install numpy>=1.23.5

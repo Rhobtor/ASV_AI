@@ -9,6 +9,7 @@ from sensor_msgs.msg import Image, CameraInfo
 import numpy as np
 import quaternion
 import cv2
+from cv_bridge import CvBridge
 import os
 import utm
 from torch.hub import load
@@ -90,7 +91,7 @@ class CameraTransformNode(Node):
         if self.cv_image is None:
             self.get_logger().info("No image available yet")
             return
-            
+        print(self.cv_image.shape)    
         self.object_dect()  # Perform object detection
 
     def depth_callback(self, msg):
@@ -100,14 +101,20 @@ class CameraTransformNode(Node):
 
     def object_dect(self):
         if self.cv_image is None:
-            self.get_logger().info("No image available yet")
+            self.get_logger().info("No image available")
             return
 
         # Perform object detection with YOLOv5
-        results = self.model(self.cv_image)
-        self.draw_boxes(self.cv_image, results.xyxy[0])
-        cv2.imshow("Object Detection", self.cv_image)
-        cv2.waitKey(1)
+        if self.cv_image is not None:
+
+            results = self.model(self.cv_image)
+            results.render()
+            results.img[0]
+
+            #self.draw_boxes(self.cv_image, results.xyxy[0])
+            cv2.imshow("Object Detection", results.img[0])
+
+            cv2.waitKey(10)
 
     def draw_boxes(self, image, detections):
         for detection in detections:

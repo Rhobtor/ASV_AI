@@ -1,13 +1,28 @@
 import rclpy
 from rclpy.node import Node
-from geometry_msgs.msg import Pose, PoseWithCovarianceStamped
-from sensor_msgs.msg import Image
+from geometry_msgs.msg import PoseStamped
+from nav_msgs.msg import Odometry
+from sensor_msgs.msg import Image, CameraInfo
 import numpy as np
 import quaternion
-import tf2_ros
-from tf2_ros import TransformBroadcaster, TransformListener
-from geometry_msgs.msg import TransformStamped
-from robot_localization.srv import SetPose
+import cv2
+import os
+import utm
+import torch
+import torch.backends.cudnn as cudnn
+import rclpy
+from rclpy.node import Node
+from sensor_msgs.msg import Image
+import cv2
+from cv_bridge import CvBridge
+import torch
+from torch.hub import load
+from geometry_msgs.msg import Point
+from std_msgs.msg import String
+# import tf2_ros
+# from tf2_ros import TransformListener
+# from tf2_geometry_msgs import do_transform_pose
+# from tf2_py import Quaternion
 
 class CameraTransformNode(Node):
 
@@ -17,117 +32,229 @@ class CameraTransformNode(Node):
         # Initialize extrinsic parameters with identity matrix and zero translation
         self.rotation_matrix = np.identity(3)
         self.translation_vector = np.zeros(3)
-
-        # Initialize tf2_ros TransformBroadcaster and TransformListener
-        self.tf_broadcaster = TransformBroadcaster(self)
-        self.tf_listener = TransformListener(self)
-
-        # Robot's global position
-        self.lat_robot = 37.7749  # Ejemplo, ajusta según la ubicación real del robot
-        self.lon_robot = -122.4194  # Ejemplo, ajusta según la ubicación real del robot
-
+        self.script_folder = os.path.dirname(os.path.abspath(__file__))  # Get the folder containing the script
+        depth_qos=rclpy.qos.QoSProfile(
+            depth=10,
+            reliability=rclpy.qos.QoSReliabilityPolicy.BEST_EFFORT,
+            durability=rclpy.qos.QoSDurabilityPolicy.VOLATILE,
+            history=rclpy.qos.QoSHistoryPolicy.KEEP_LAST
+            )
+        pos_qos=rclpy.qos.QoSProfile(
+            depth=10,
+            reliability=rclpy.qos.QoSReliabilityPolicy.BEST_EFFORT,
+            durability=rclpy.qos.QoSDurabilityPolicy.VOLATILE,
+            history=rclpy.qos.QoSHistoryPolicy.KEEP_LAST
+            )
+        info_qos=rclpy.qos.QoSProfile(
+            depth=10,
+            reliability=rclpy.qos.QoSReliabilityPolicy.BEST_EFFORT,
+            durability=rclpy.qos.QoSDurabilityPolicy.VOLATILE,
+            history=rclpy.qos.QoSHistoryPolicy.KEEP_LAST
+            )
         # Create subscriptions to odometry and depth topics
-        self.odometry_sub = self.create_subscription(Pose, 'odometry', self.odometry_callback, 10)
-        self.depth_sub = self.create_subscription(Image, 'depth', self.depth_callback, 10)
+        self.odometry_sub = self.create_subscription(PoseStamped, '/zed2i/zed_node/pose', self.pose_callback, pos_qos)
+        self.depth_sub = self.create_subscription(Image, '/zed2i/zed_node/depth/depth_registered', self.depth_callback, depth_qos)
+        self.camera_image_sub = self.create_subscription(Image,'/zed2i/zed_node/left/image_rect_color',self.image_callback,info_qos)        
+        self.camera_info_sub = self.create_subscription(CameraInfo,'/zed2i/zed_node/left/camera_info',self.camera_info_callback,info_qos)
+        self.object_distances = self.create_publisher(String, 'object_distances', 10)
+        self.object_coordinates = self.create_publisher(String, 'object_coordinates', 10)
+        timer_period=1.0
+        self.object_coordinates_timer=self.create_timer(timer_period,self.real_coordinates)
+        self.object_distances_timer=self.create_timer(timer_period,self.object_dect)
+        self.model = load('ultralytics/yolov5', 'yolov5s', pretrained=True)
+        self.bridge = CvBridge()
+        self.distance=0
+        self.u=0
+        self.v=0
+        self.cv_image=None
+        self.depth_image=None
+        self.roll=None
+        self.pitch=None
+        self.yaw=None
+        self.RAD2DEG = 57.295779513
 
-        # Create a publisher for the robot_localization node
-        self.robot_localization_pub = self.create_publisher(PoseWithCovarianceStamped, '/odometry/filtered', 10)
+    def pose_callback(self, msg):
+        # Camera position in map frame
+        tx = msg.pose.position.x
+        ty = msg.pose.position.y
+        tz = msg.pose.position.z
 
-    def odometry_callback(self, msg):
-        # Extract position and orientation from odometry message
-        odometry_position = [msg.position.x, msg.position.y, msg.position.z]
-        odometry_orientation = [msg.orientation.x, msg.orientation.y, msg.orientation.z, msg.orientation.w]
+        # Orientation quaternion
+        q = quaternion.quaternion(
+            msg.pose.orientation.w,
+            msg.pose.orientation.x,
+            msg.pose.orientation.y,
+            msg.pose.orientation.z
+        )
 
-        # Update extrinsic parameters based on odometry
-        self.rotation_matrix, self.translation_vector = self.update_extrinsic_parameters(odometry_position, odometry_orientation)
+        # Convert quaternion to roll, pitch, and yaw
+        self.roll, self.pitch, self.yaw = quaternion.as_euler_angles(q)
 
-        # Broadcast the transformation from the "camera" frame to the "robot_base" frame
-        self.broadcast_transform("camera", "robot_base", self.rotation_matrix, self.translation_vector)
+    def camera_info_callback(self, msg):
+        # Almacenar la información de la cámara
+        self.camera_info = msg
 
-        # Publish the odometry message with covariance to robot_localization
-        self.publish_robot_localization(msg)
+    # def camera_image_callback(self,msg):
+    #     self.images=memoryview(msg.data).cast('f')
 
-    def update_extrinsic_parameters(self, odometry_position, odometry_orientation):
-        # Assuming odometry_position is a 3-element array [x, y, z]
-        translation_vector = np.array(odometry_position)
-
-        # Assuming odometry_orientation is a 4-element array [x, y, z, w]
-        rotation_quaternion = quaternion.as_quat_array(odometry_orientation)
-        rotation_matrix = quaternion.as_rotation_matrix(rotation_quaternion)
-
-        return rotation_matrix, translation_vector
-
+    def image_callback(self, msg):
+        self.cv_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
+        # if self.cv_image is None:
+        #     self.get_logger().info("No image available yet")
+            
+    
+        # results = self.model(self.cv_image)
+        # self.draw_boxes(self.cv_image, results.xyxy[0])
+        # cv2.imshow("Object Detection", self.cv_image)
+        # cv2.waitKey(1)
+    
     def depth_callback(self, msg):
         # Get a pointer to the depth values casting the data pointer to floating point
-        depths = list(msg.data)
+        self.depth_image = memoryview(msg.data).cast('f')
+        self.width=msg.width
+    def object_dect(self):
+        if self.cv_image is None:
+            self.get_logger().info("No image available yet")
+            
+    
+        results = self.model(self.cv_image)
+        self.draw_boxes(self.cv_image, results.xyxy[0])
+        cv2.imshow("Object Detection", self.cv_image)
+        cv2.waitKey(1)
 
-        # Image coordinates of the center pixel
-        u = msg.width // 2
-        v = msg.height // 2
+    def draw_boxes(self, image, detections):
+        for detection in detections:
+            xmin, ymin, xmax, ymax, conf, cls_conf = detection  # Adjusted unpacking
+            # Filtrar detecciones para la clase 0.00
+            if int(cls_conf) != 0.00:
+                continue
+            
+            cv2.rectangle(image, (int(xmin), int(ymin)), (int(xmax), int(ymax)), (0, 255, 0), 2)
+            cv2.putText(image, f'Class: {cls_conf:.2f}', (int(xmin), int(ymin) - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
-        # Linear index of the center pixel
-        center_idx = u + msg.width * v
+            # Calculate distance from camera (example, replace with actual distance calculation)
+            self.distance = self.calculate_distance(xmin, ymin, xmax, ymax)
+            center_x = int((xmin + xmax) / 2)
+            center_y = int((ymin + ymax) / 2)
+
+                # Dibujar un círculo en el centro del cuadro de detección
+            cv2.circle(image, (center_x, center_y), 3, (255, 0, 0), -1)
+            
+            # Dibujar las coordenadas del centro del cuadro de detección
+            cv2.putText(image, f'({center_x}, {center_y})', (center_x, center_y + 15), 
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
+
+
+            # Publish distance to a topic
+            self.get_logger().info(f"Class: {cls_conf:.2f}, Distance: {self.distance} meters")
+            distance_msg = String()
+            distance_msg.data = f"Class: {cls_conf:.2f}, Distance: {self.distance} meters"
+            # self.publisher.publish(distance_msg)
+
+    def calculate_distance(self, xmin, ymin, xmax, ymax):
+        if self.depth_image is None:
+            return 0
+
+        center_x = int((xmin + xmax) / 2)
+        center_y = int((ymin + ymax) / 2)
+        depth_image_np = np.array(self.depth_image)
+        depth_values = depth_image_np[center_y * self.width + center_x]
+        depth_values = depth_values[depth_values != 0]
+
+        if len(depth_values) > 0:
+            return np.mean(depth_values)
+        else:
+            return 0
+        
+    def real_coordinates(self):
 
         # Convert pixel coordinates to 3D point in camera frame
-        Z = depths[center_idx]
-        X = (u - msg.width // 2) * Z / msg.width
-        Y = (v - msg.height // 2) * Z / msg.height
+        Z = self.distance
+        X = (self.u - 663.865) * Z / (533.615)
+        Y = (self.v - 364.0325) * Z / (533.66)
         point_camera_frame = np.array([X, Y, Z])
 
-        # Transform 3D point to robot's base frame
-        point_robot_base_frame = np.dot(self.rotation_matrix, point_camera_frame) + self.translation_vector
+        #self.get_logger().info("Point Frame (Base Frame): %s " %  str(point_camera_frame))
 
-        # Transform point to global coordinates
-        lat_global, lon_global, Z_global = self.local_to_global(point_robot_base_frame[0], point_robot_base_frame[1], point_robot_base_frame[2])
+        # Definir los ángulos de rotación en radianes
+        angle_z = np.radians(90)  # Rotación alrededor del eje z
+        angle_y = np.radians(90)  # Rotación alrededor del nuevo eje y
 
-        self.get_logger().info("Transformed Point (Global Coordinates): Lat: %s, Lon: %s, Alt: %s", str(lat_global), str(lon_global), str(Z_global))
+        # Matrices de rotación
+        rotation_matrix_z = np.array([
+            [np.cos(angle_z), -np.sin(angle_z), 0],
+            [np.sin(angle_z), np.cos(angle_z), 0],
+            [0, 0, 1]
+        ])
 
-    def local_to_global(self, X_local, Y_local, Z_local):
-        # Radio medio de la Tierra en kilómetros
-        radio_de_la_Tierra = 6371.0
+        rotation_matrix_y = np.array([
+            [np.cos(angle_y), 0, np.sin(angle_y)],
+            [0, 1, 0],
+            [-np.sin(angle_y), 0, np.cos(angle_y)]
+        ])
 
-        # Conversión de grados a radianes
-        lat_robot_rad = np.radians(self.lat_robot)
+        # Combinar las matrices de rotación
+        combined_rotation_matrix = np.dot(rotation_matrix_y, rotation_matrix_z)
 
-        # Cálculo de las coordenadas globales
-        lat_global = self.lat_robot + (Y_local / radio_de_la_Tierra) * (180.0 / np.pi)
-        lon_global = self.lon_robot + (X_local / (radio_de_la_Tierra * np.cos(lat_robot_rad))) * (180.0 / np.pi)
+        # Aplicar las rotaciones a las coordenadas en el marco de la cámara
+        point_camera_rotated = np.dot(combined_rotation_matrix, point_camera_frame)
 
-        return lat_global, lon_global, Z_local
+        # Desplazamiento en el eje y y z
+        displacement_y = 0.3922
+        displacement_z = 0.2401
 
-    def broadcast_transform(self, frame_id, child_frame_id, rotation_matrix, translation_vector):
-        # Construct TransformStamped message
-        transform_msg = TransformStamped()
-        transform_msg.header.stamp = self.get_clock().now().to_msg()
-        transform_msg.header.frame_id = frame_id
-        transform_msg.child_frame_id = child_frame_id
-        transform_msg.transform.translation.x = translation_vector[0]
-        transform_msg.transform.translation.y = translation_vector[1]
-        transform_msg.transform.translation.z = translation_vector[2]
+        # Aplicar desplazamientos
+        point_camera_shifted = point_camera_rotated + np.array([0, displacement_y, displacement_z])
 
-        # Convert rotation matrix to quaternion
-        rotation_quaternion = quaternion.from_rotation_matrix(rotation_matrix)
-        transform_msg.transform.rotation.x = rotation_quaternion[0]
-        transform_msg.transform.rotation.y = rotation_quaternion[1]
-        transform_msg.transform.rotation.z = rotation_quaternion[2]
-        transform_msg.transform.rotation.w = rotation_quaternion[3]
+        self.get_logger().info("Point Center Camera: %s " %  str(point_camera_shifted))
 
-        # Broadcast the transform
-        self.tf_broadcaster.sendTransform(transform_msg)
+        
+###### por ahora no############################
+        # # Convertir de latitud y longitud a coordenadas UTM, (sub a gps node ASV)
+        # latitude = 37.4191666
+        # longitude = -6.0005347
+        # utm_coords = utm.from_latlon(latitude, longitude)
+        # utm_x, utm_y, zone_number, zone_letter = utm_coords
 
-    def publish_robot_localization(self, odometry_msg):
-        # Create PoseWithCovarianceStamped message
-        pose_msg = PoseWithCovarianceStamped()
-        pose_msg.header.stamp = self.get_clock().now().to_msg()
-        pose_msg.header.frame_id = "odom"  # Frame utilizado por robot_localization
+        # #print(f'UTM Coordinates: ({utm_x}, {utm_y}) in zone {zone_number}{zone_letter}')
 
-        # Set the pose in the message
-        pose_msg.pose.pose = odometry_msg
-        # Covariance debe ser ajustada según la precisión de las mediciones y la configuración del robot_localization
-        pose_msg.pose.covariance = [0.01] * 36  # Ejemplo: Covarianza igual a 0.01 para todas las entradas
+        # # Convertir de coordenadas UTM a latitud y longitud
+        # back_to_latlon = utm.to_latlon(point_camera_shifted[0]+utm_x, point_camera_shifted[1]+utm_y, zone_number, zone_letter)
+        # back_latitude, back_longitude = back_to_latlon
 
-        # Publish the message to the robot_localization node
-        self.robot_localization_pub.publish(pose_msg)
+        # #print(f'Back to Latitud, Longitude: ({back_latitude}, {back_longitude})')
+
+        # ##
+########################################################        
+        
+        rotation_matrix = np.array([
+            [np.cos(self.yaw), -np.sin(self.yaw), 0],
+            [np.sin(self.yaw), np.cos(self.yaw), 0],
+            [0, 0, 1]
+                ])
+
+        # Aplicar la rotación a la posición del objeto
+        rotated_obj_position = np.dot(rotation_matrix,point_camera_shifted )
+        self.get_logger().info("ASV poitn: %s " %  str(rotated_obj_position))
+
+       # Capture the image with the point marked
+        # self.visualize_point(msg, u, v)
+
+    def visualize_point(self, msg, u, v):
+        # Convert ROS Image message to OpenCV format
+        img = np.frombuffer(msg.data, dtype=np.uint8).reshape(msg.height, msg.width, -1)
+
+        # Mark the point with a circle
+        img_with_point = img.copy()
+        cv2.circle(img_with_point, (u, v), 30, (0, 0, 0), -1)  # Circle in red
+
+         # Save the image in the script's folder
+        image_path = os.path.join(self.script_folder, 'marked_image.png')
+        cv2.imwrite(image_path, img_with_point)
+
+        self.get_logger().info(f"Image saved at: {image_path}")
+
+
 
 def main(args=None):
     rclpy.init(args=args)
